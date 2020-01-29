@@ -12,29 +12,43 @@
 #' @importFrom parallel mclapply detectCores
 #' @export
 
-pre_processor_flowcam <- function( input, output ) {
-
+pre_processor_flowcam <- function(
+  input,
+  output
+) {
   cat("\n########################################################\n")
   cat("\nProcessing flowcam...\n")
+  ##
+  dir.create( output, recursive = TRUE, showWarnings = FALSE )
+  file.copy(
+    from = file.path(input, "."),
+    to = output,
+    recursive = TRUE
+  )
+  ##
   tif <- list.files(
-    path = file.path( input, "flowcam" ),
+    path = file.path( output, "flowcam" ),
     pattern = "*.tif",
     full.names = TRUE,
     recursive = TRUE
   )
+  ##
   if ( length(tif) > 0 ) {
     parallel::mclapply(
       tif,
       function(tn){
-        tiff::writeTIFF(
-          what = tiff::readTIFF(tn),
-          where = tn,
-          compression = "deflate"
+        try(
+          tiff::writeTIFF(
+            what = tiff::readTIFF(tn),
+            where = tn,
+            compression = "deflate"
+          ),
+          silent = FALSE
         )
-      },
-      mc.cores = parallel::detectCores() - 2
+      }
     )
   }
+  ##
   cat("done\n")
   cat("\n########################################################\n")
 
