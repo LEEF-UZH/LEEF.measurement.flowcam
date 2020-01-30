@@ -19,15 +19,16 @@ pre_processor_flowcam <- function(
   cat("\n########################################################\n")
   cat("\nProcessing flowcam...\n")
   ##
-  dir.create( output, recursive = TRUE, showWarnings = FALSE )
+  tmpdir <- tempfile()
+  dir.create( tmpdir )
+  ##
   file.copy(
-    from = file.path(input, "."),
-    to = output,
+    from = file.path(input, "flowcam", "."),
+    to = tmpdir,
     recursive = TRUE
   )
-  ##
   tif <- list.files(
-    path = file.path( output, "flowcam" ),
+    path = tmpdir,
     pattern = "*.tif",
     full.names = TRUE,
     recursive = TRUE
@@ -48,6 +49,15 @@ pre_processor_flowcam <- function(
       }
     )
   }
+  ##
+  dir.create( file.path(output, "flowcam"), recursive = TRUE, showWarnings = FALSE )
+  file.copy(
+    from = file.path( tmpdir, "."),
+    to = file.path( output, "flowcam", "."),
+    recursive = TRUE
+  )
+  ##
+  unlink( tmpdir, recursive = TRUE )
   ##
   cat("done\n")
   cat("\n########################################################\n")
