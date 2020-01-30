@@ -1,7 +1,7 @@
 Package: LEEF.measurement.flowcam
 Type: Package
 Title: Pre-process and extract flowcam data
-Version: 0.2.0
+Version: 0.3.0
 Author: Rainer M. Krug <Rainer.Krug@uzh.ch>
 Maintainer: Rainer M. Krug <Rainer.Krug@uzh.ch>
 Description: More about what it does (maybe more than one line)
