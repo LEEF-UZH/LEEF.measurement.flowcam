@@ -14,8 +14,8 @@
 #'
 #' @export
 extractor_flowcam <- function( input, output ) {
-  cat("\n########################################################\n")
-  cat("\nExtracting flowcam...\n")
+  message("\n########################################################\n")
+  message("\nExtracting flowcam...\n")
 
 # Based on flowcam_classification_to_final_data.R ----------------------------------------
   # David Inauen, 19.06.2017
@@ -31,8 +31,8 @@ extractor_flowcam <- function( input, output ) {
   )
 
   if (length(flowcam_files) == 0) {
-    cat("nothing to extract\n")
-    cat("\n########################################################\n")
+    message("nothing to extract\n")
+    message("\n########################################################\n")
     return(invisible(FALSE))
   }
 
@@ -207,8 +207,8 @@ extractor_flowcam <- function( input, output ) {
 
 # Finalize ----------------------------------------------------------------
 
-  cat("done\n")
-  cat("\n########################################################\n")
+  message("done\n")
+  message("\n########################################################\n")
 
   invisible(TRUE)
 }
