@@ -3,8 +3,6 @@
 export(extractor_flowcam)
 export(pre_processor_flowcam)
 export(register)
-importFrom(LEEF.Data,add_extractor)
-importFrom(LEEF.Data,add_pre_processor)
 importFrom(R.utils,bzip2)
 importFrom(dplyr,bind_rows)
 importFrom(dplyr,group_by)

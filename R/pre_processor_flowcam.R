@@ -16,8 +16,8 @@ pre_processor_flowcam <- function(
   input,
   output
 ) {
-  cat("\n########################################################\n")
-  cat("\nProcessing flowcam...\n")
+  message("\n########################################################\n")
+  message("\nProcessing flowcam...\n")
   ##
   tmpdir <- tempfile()
   dir.create( tmpdir )
@@ -59,8 +59,8 @@ pre_processor_flowcam <- function(
   ##
   unlink( tmpdir, recursive = TRUE )
   ##
-  cat("done\n")
-  cat("\n########################################################\n")
+  message("done\n")
+  message("\n########################################################\n")
 
   invisible(TRUE)
 }
