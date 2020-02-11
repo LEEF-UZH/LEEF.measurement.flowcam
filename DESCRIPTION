@@ -1,7 +1,7 @@
 Package: LEEF.measurement.flowcam
 Type: Package
-Title: Pre-process and extract flowcam data
-Version: 0.5.0
+Title: Pre-Process and Extract Flowcam Data
+Version: 0.5.1
 Author: Rainer M. Krug <Rainer.Krug@uzh.ch>
 Maintainer: Rainer M. Krug <Rainer.Krug@uzh.ch>
 Description: More about what it does (maybe more than one line)
@@ -21,4 +21,5 @@ LazyData: true
 RoxygenNote: 7.0.2
 Suggests: 
     LEEF.Data,
-    testthat
+    testthat,
+    openssl
