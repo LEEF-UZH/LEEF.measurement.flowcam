@@ -193,7 +193,7 @@ extractor_flowcam <- function( input, output ) {
 
 # SAVE --------------------------------------------------------------------
   add_path <- file.path( output, "flowcam" )
-  dir.create( add_path, recursive = TRUE )
+  dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
   #
   saveRDS(
     object = classes,
