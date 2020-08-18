@@ -1,16 +1,16 @@
-#' Register the processing of flowcam data in the LEEF.Data package
+#' Register the processing of flowcam data in the LEEF package
 #'
 #' @return invisibly \code{TRUE} when completed successful
 #'
 #' @export
 #'
 register <- function() {
-  if (is.null(system.file(package = "LEEF.Data"))) {
+  if (is.null(system.file(package = "LEEF"))) {
     stop("This function requres the package to be installed!")
   }
 
-  LEEF.Data::add_pre_processor( pre_processor_flowcam )
-  LEEF.Data::add_extractor( extractor_flowcam )
+  LEEF::add_pre_processor( pre_processor_flowcam )
+  LEEF::add_extractor( extractor_flowcam )
 
   invisible(TRUE)
 }
