@@ -64,6 +64,7 @@ deps:
 
 docs:
 	Rscript -e "devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))"
+	Rscript -e "codemetar::write_codemeta()"
 
 ####
 
@@ -95,10 +96,10 @@ install: build
 
 ####
 
-drat: build
+drat: docs build
 	cd 
 	@Rscript -e "drat::insertPackage('./../$(PKGNAME)_$(PKGVERS).tar.gz', repodir = './../../drat/', commit = TRUE)"
-	cd ./../../drat/; git push origin gh-pages
+
 	
 ####
 

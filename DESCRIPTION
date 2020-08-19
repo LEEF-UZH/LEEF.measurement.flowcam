@@ -3,8 +3,7 @@ Type: Package
 Title: Pre-Process and Extract Flowcam Data
 Version: 0.8.0
 Authors@R: c(
-  person(given = "Rainer M.", family = "Krug", email = "Rainer.Krug@uzh.zch", role = c("aut", "cre")),
-  person(given = "Owen L.", family = "Petchey", email = "Owen.Petchey@uzh.zch", role = c("aut"))
+  person(given = "Rainer M.", family = "Krug", email = "Rainer.Krug@uzh.zch", role = c("aut", "cre"))
   )
 Maintainer: Rainer M. Krug <Rainer.Krug@uzh.ch>
 BugReports: https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues
