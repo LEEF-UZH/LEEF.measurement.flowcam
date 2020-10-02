@@ -7,7 +7,7 @@
 raw_data_ok(input)
 }
 \arguments{
-\item{input}{raw data folder containing bemovi data, i.e usually is \code{some/path/bemovi}}
+\item{input}{raw data folder containing flowcam data, i.e usually is \code{some/path/flowcam}}
 }
 \value{
 \code{TRUE} if ok, \code{FALSE} or \code{list} of problems if not
