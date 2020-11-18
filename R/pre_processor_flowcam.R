@@ -29,6 +29,11 @@ pre_processor_flowcam <- function(
     to = file.path(output, "flowcam"),
     recursive = TRUE
   )
+  file.copy(
+    from = file.path(input, "sample_metadata.yml"),
+    to = file.path(output, "sample_metadata.yml")
+  )
+
   ## we can not use the compression, as the flowcam can not read compressed TIFF files........
   # tmpdir <- tempfile()
   # dir.create( tmpdir )

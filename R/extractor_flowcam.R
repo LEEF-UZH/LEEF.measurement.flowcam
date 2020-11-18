@@ -206,6 +206,10 @@ extractor_flowcam <- function( input, output ) {
     object = classes_aggregated,
     file = file.path(add_path, "flowcam_aggregated.rds")
   )
+  file.copy(
+    from = file.path(input, "sample_metadata.yml"),
+    to = file.path(output, "sample_metadata.yml")
+  )
 
 # Finalize ----------------------------------------------------------------
 
