@@ -23,14 +23,13 @@ extractor_flowcam <- function( input, output ) {
 # Get csv file names ------------------------------------------------------
 
   flowcam_path <- file.path( input, "flowcam" )
-  flowcam_files <- list.files(
+  fcns <- list.dirs(
     path = flowcam_path,
-    pattern = ".*_classes_.*_data.csv",
-    full.names = TRUE,
-    recursive = TRUE
+    recursive = FALSE,
+    full.names = FALSE
   )
 
-  if (length(flowcam_files) == 0) {
+  if (length(fcns) == 0) {
     message("nothing to extract\n")
     message("\n########################################################\n")
     return(invisible(FALSE))
@@ -39,7 +38,7 @@ extractor_flowcam <- function( input, output ) {
 # read in all data frames as list, way faster than read.csv ---------------------------------
 
   classes <- lapply(
-    flowcam_files,
+    file.path(flowcam_path, fcns, paste0(fcns, ".csv")),
     readr::read_csv,
     col_types =
       cols(
@@ -62,7 +61,7 @@ extractor_flowcam <- function( input, output ) {
         Timestamp = col_datetime(format = "")
       )
   ) %>%
-    # combine intu one large tibble
+    # combine into one large tibble
     dplyr::bind_rows(.) %>%
     # add jar ID's to df
     dplyr::mutate(
@@ -192,14 +191,17 @@ extractor_flowcam <- function( input, output ) {
     )
 
 # SAVE --------------------------------------------------------------------
+
   add_path <- file.path( output, "flowcam" )
   dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
   #
+  names(classes) <- tolower(names(classes))
   saveRDS(
     object = classes,
     file = file.path(add_path, "flowcam_raw.rds")
   )
   #
+  names(classes_aggregated) <- tolower(names(classes_aggregated))
   saveRDS(
     object = classes_aggregated,
     file = file.path(add_path, "flowcam_aggregated.rds")
