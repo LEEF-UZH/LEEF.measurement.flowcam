@@ -8,13 +8,15 @@
 #'
 #' @return the (new) value of the argument
 #'
+#' @importFrom utils tail
+#'
 #' @export
 #'
 #' @examples
 par_template <- function(value) {
   parName <- match.call()[[1]]
   parName <- as.character(parName)
-  parName <- tail(parName, 1)
+  parName <- utils::tail(parName, 1)
   parName <- gsub("par_", "", parName)
   if ( missing(value) ) {
     if (!exists(parName, envir = .FLOWCAM_CACHE, inherits = FALSE)) {
@@ -62,9 +64,11 @@ load_parameter <- function(file = "parameter.yaml") {
 
 #' Print the flowcam parameter
 #'
+#' @param echo if the results should be shown on the screen or only the cache returned as a list.
 #' @param print_as_yaml Print in yaml formated text; \code{~} stands for NULL
-#' @param should anything be printed (\code{TRUE}) or just a list returned (\code{FALSE})
+#'
 #' @return invisible returns list of parameter for further processing
+#'
 #' @importFrom yaml as.yaml
 #' @export
 #'

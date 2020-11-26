@@ -9,7 +9,7 @@ print_parameter(print_as_yaml = TRUE, echo = TRUE)
 \arguments{
 \item{print_as_yaml}{Print in yaml formated text; \code{~} stands for NULL}
 
-\item{should}{anything be printed (\code{TRUE}) or just a list returned (\code{FALSE})}
+\item{echo}{if the results should be shown on the screen or only the cache returned as a list.}
 }
 \value{
 invisible returns list of parameter for further processing
