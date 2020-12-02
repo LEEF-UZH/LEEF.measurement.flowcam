@@ -14,12 +14,7 @@ License: MIT + file LICENSE
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    R.utils, 
-    dplyr, 
-    magrittr, 
-    readr, 
-    tiff, 
-    stats,
+    data.table,
     yaml
 Encoding: UTF-8
 LazyData: true
