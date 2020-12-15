@@ -133,6 +133,7 @@ extractor_flowcam <- function( input, output ) {
   names(traits)[ names(traits) == "Timestamp" ] <- "Timestamp_flowcam"
   timestamp <- yaml::read_yaml(file.path(input, "flowcam", "sample_metadata.yml"))$timestamp
   traits <- cbind(timestamp = timestamp, traits)
+  metadata <- cbind(timestamp = timestamp, metadata)
   
 # SAVE --------------------------------------------------------------------
 
