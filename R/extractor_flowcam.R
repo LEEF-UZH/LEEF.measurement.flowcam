@@ -9,6 +9,7 @@
 #'
 #' @importFrom data.table fread
 #' @importFrom	yaml read_yaml yaml.load
+#' @importFrom utils write.csv
 #'
 #' @export
 extractor_flowcam <- function( input, output ) {
@@ -79,13 +80,14 @@ extractor_flowcam <- function( input, output ) {
       x[[1]][[1]]
     }
   )
+  traits$bottle <- as.integer(traits$bottle)
 
 # read in metadata --------------------------------------------------------
 
   metadata <- lapply(
     metadata_files,
     function(x){
-      bottle <- dirname(x)
+      bottle <- as.integer(dirname(x))
 
       md <- readLines( file.path( flowcam_path, x ) )
       md <- grep("\t", md, value = TRUE)
@@ -110,6 +112,11 @@ extractor_flowcam <- function( input, output ) {
     subset =  metadata$parameter == "Fluid Volume Imaged"
   )
   names(volume_imaged)[names(volume_imaged)=="value"] <- "volume_imaged"
+	volume_imaged$volume_imaged <- gsub(
+		" ml",
+		"",
+		volume_imaged$volume_imaged
+	)
 
   traits <- merge(
       x = traits,
@@ -120,30 +127,32 @@ extractor_flowcam <- function( input, output ) {
   )
 
 
-# append `_flowcam` to `Date` and `Timestamp` -----------------------------
+# append `_flowcam` to `Date` and `Timestamp` and add `timestamp` ------------------
 
   names(traits)[ names(traits) == "Date" ] <- "Date_flowcam"
   names(traits)[ names(traits) == "Timestamp" ] <- "Timestamp_flowcam"
-
+  timestamp <- yaml::read_yaml(file.path(input, "flowcam", "sample_metadata.yml"))$timestamp
+  traits <- cbind(timestamp = timestamp, traits)
+  
 # SAVE --------------------------------------------------------------------
 
   add_path <- file.path( output, "flowcam" )
   dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
   #
-  write.csv(
+  utils::write.csv(
     traits,
     file = file.path(add_path, "algae_traits.csv"),
     row.names = FALSE
   )
   #
-  write.csv(
+  utils::write.csv(
     metadata,
     file = file.path(add_path, "algae_metadata.csv"),
     row.names = FALSE
   )
   file.copy(
-    from = file.path(input, "sample_metadata.yml"),
-    to = file.path(output, "sample_metadata.yml")
+    from = file.path(input, "flowcam", "sample_metadata.yml"),
+    to = file.path(output, "flowcam", "sample_metadata.yml")
   )
 
 # Finalize ----------------------------------------------------------------

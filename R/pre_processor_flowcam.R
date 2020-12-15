@@ -28,7 +28,7 @@ pre_processor_flowcam <- function(
   )
   file.copy(
     from = file.path(input, "sample_metadata.yml"),
-    to = file.path(output, "sample_metadata.yml")
+    to = file.path(output,  "flowcam","sample_metadata.yml")
   )
 
   message("done\n")
