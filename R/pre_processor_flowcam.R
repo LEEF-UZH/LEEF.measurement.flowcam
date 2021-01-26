@@ -22,6 +22,12 @@ pre_processor_flowcam <- function(
     showWarnings = FALSE
   )
   file.copy(
+  	file.path( input, "..", "00.general.parameter", "." ),
+  	file.path( output, "flowcam" ),
+  	recursive = TRUE,
+  	overwrite = TRUE
+  )
+  file.copy(
     from = file.path(input, "flowcam", "."),
     to = file.path(output, "flowcam"),
     recursive = TRUE
