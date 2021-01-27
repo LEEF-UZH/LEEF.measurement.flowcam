@@ -10,6 +10,9 @@
 #' @importFrom data.table fread
 #' @importFrom	yaml read_yaml yaml.load
 #' @importFrom utils write.csv
+#' @importFrom dplyr left_join group_by summarise mutate n select filter
+#' @importFrom plyr join
+#' @import randomForest
 #'
 #' @export
 extractor_flowcam <- function( input, output ) {
@@ -26,6 +29,7 @@ extractor_flowcam <- function( input, output ) {
     recursive = TRUE,
     full.names = FALSE
   )
+  trait_files <- grep("composition|experimental|dilution", trait_files, invert = TRUE, value = TRUE)
   trait_files <- grep(
     pattern = "_summary.csv",
     trait_files,
@@ -52,26 +56,26 @@ extractor_flowcam <- function( input, output ) {
     return(invisible(FALSE))
   }
 
-  # read in traits ----------------------------------------------------------
+  # read in algae_traits ----------------------------------------------------------
 
-  traits <- lapply(
+  algae_traits <- lapply(
     file.path(flowcam_path, trait_files),
     data.table::fread
   )
 
-  # traits <- dplyr::bind_rows(traits)
-  traits <- do.call( rbind.data.frame, traits )
+  # algae_traits <- dplyr::bind_rows(algae_traits)
+  algae_traits <- do.call( rbind.data.frame, algae_traits )
 
-  colnames(traits) <- make.names(colnames(traits))
-  colnames(traits) <- gsub("\\.$", "", colnames(traits))
-  colnames(traits) <- gsub("\\.\\.", "_", colnames(traits))
-  colnames(traits) <- gsub("\\.", "_", colnames(traits))
+  colnames(algae_traits) <- make.names(colnames(algae_traits))
+  colnames(algae_traits) <- gsub("\\.$", "", colnames(algae_traits))
+  colnames(algae_traits) <- gsub("\\.\\.", "_", colnames(algae_traits))
+  colnames(algae_traits) <- gsub("\\.", "_", colnames(algae_traits))
 
 
   # extract information on bottle from the column "Image_file" --------
 
-  traits$bottle <- sapply(
-    traits$Image_File,
+  algae_traits$bottle <- sapply(
+    algae_traits$Image_File,
     function(x) {
       x <- strsplit(
         x,
@@ -80,7 +84,7 @@ extractor_flowcam <- function( input, output ) {
       x[[1]][[1]]
     }
   )
-  traits$bottle <- as.integer(traits$bottle)
+  algae_traits$bottle <- as.integer(algae_traits$bottle)
 
 # read in metadata --------------------------------------------------------
 
@@ -105,7 +109,7 @@ extractor_flowcam <- function( input, output ) {
     )
   metadata <- do.call( rbind.data.frame, metadata )
 
-  # add volume_imaged to traits ---------------------------------------------
+  # add volume_imaged to algae_traits ---------------------------------------------
 
   volume_imaged <- subset(
     metadata[c("bottle", "value")],
@@ -118,8 +122,8 @@ extractor_flowcam <- function( input, output ) {
 		volume_imaged$volume_imaged
 	)
 
-  traits <- merge(
-      x = traits,
+  algae_traits <- merge(
+      x = algae_traits,
       y = volume_imaged,
       by = c("bottle"),
       all.x = TRUE,
@@ -129,20 +133,141 @@ extractor_flowcam <- function( input, output ) {
 
 # append `_flowcam` to `Date` and `Timestamp` and add `timestamp` ------------------
 
-  names(traits)[ names(traits) == "Date" ] <- "Date_flowcam"
-  names(traits)[ names(traits) == "Timestamp" ] <- "Timestamp_flowcam"
+  names(algae_traits)[ names(algae_traits) == "Date" ] <- "Date_flowcam"
+  names(algae_traits)[ names(algae_traits) == "Timestamp" ] <- "Timestamp_flowcam"
   timestamp <- yaml::read_yaml(file.path(input, "flowcam", "sample_metadata.yml"))$timestamp
-  traits <- cbind(timestamp = timestamp, traits)
+  algae_traits <- cbind(timestamp = timestamp, algae_traits)
   metadata <- cbind(timestamp = timestamp, metadata)
-  
+
+
+
+# Species ID --------------------------------------------------------------
+
+  design <- read.csv(file.path(input, "flowcam", "experimental_design.csv"))
+  comps <- read.csv(file.path(input, "flowcam", "compositions.csv"))
+  species.tracked <- c("Chlamydomonas", "Cosmarium", "Cryptomonas", "Desmodesmus", "Dexiostoma",
+                       "Loxocephallus", "Monoraphidium", "Staurastrum1", "Staurastrum2", "Tetrahymena",
+                       "airbubbles","ColpidiumVacuoles","Debris","OtherCiliate","ChlamydomonasClumps",
+                       "Coleps_irchel", "Coleps_viridis", "Colpidium")
+  dilution <- read.csv(file.path(input, "flowcam", "flowcam_dilution.csv"))
+  algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
+
+
+  # !!! The next line won't be needed in final scriupt I think !!! Ask Romana...
+
+  algae_traits$bottle <- ifelse(algae_traits$bottle<10, paste0("b_0",algae_traits$bottle),paste0("b_",algae_traits$bottle))
+
+  algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
+
+  # 1. Load in random classifiers (rds)
+
+  classifiers_constant <- readRDS(
+    file.path(
+      input,
+      "flowcam",
+      "flowcam_classifiers_18c.rds"
+    )
+  )
+
+  classifiers_increasing <- readRDS(
+    file.path(
+      input,
+      "flowcam",
+      "flowcam_classifiers_increasing_best_available.rds"
+    )
+  )
+
+  # 2. Make a list of 32 dataframes: split morph_mvt based on species combination and temperature regime
+
+  algae_traits_list <- split(
+    x = algae_traits,
+    f = algae_traits$bottle,
+    drop = TRUE
+  )
+
+  # 3. Predict species identities in the 32 dfs based on the 32 rf classifiers
+
+  for(i in 1:length(algae_traits_list)){
+
+    df <- algae_traits_list[[i]]
+
+    temperature_treatment <- unique(df$temperature) # either "constant" or "increasing"
+    composition_id <- unique(df$composition) # a char between c_01 and c_16
+
+    if (temperature_treatment == "constant"){
+      df$species <- predict(classifiers_constant[[composition_id]], df) # species prediction
+      df$species_probability <- apply(predict(classifiers_constant[[composition_id]], df, type = "prob"),
+                                      1,max) # probability of each species prediction
+    } else {
+      df$species <- predict(classifiers_increasing[[composition_id]], df) # species prediction
+      df$species_probability <- apply(predict(classifiers_increasing[[composition_id]], df, type = "prob"),
+                                      1,max) # probability of each species prediction
+    }
+    algae_traits_list[[i]] <- df
+  }
+
+  # 4. Merge the 32 dfs back into a single df: algae_traits
+
+  algae_traits <- do.call("rbind", algae_traits_list)
+
+# calculate species densities ---------------------------------------------
+
+  algae_traits$volume_imaged <- as.numeric(algae_traits$volume_imaged)
+  algae_density <- algae_traits %>%
+    dplyr::group_by(timestamp,    species, bottle, composition, temperature, incubator, volume_imaged, dilution_factor, richness) %>%
+#   dplyr::group_by(Date_Flowcam, species, bottle, composition, temperature, incubator, volume_imaged, dilution_factor, richness) %>%
+    dplyr::summarise(count = dplyr::n()) %>%
+    dplyr::mutate(density = count * dilution_factor / volume_imaged)
+
+# add density = 0 for extinct species -------------------------------------
+
+  comp_id <- unique(comps$composition)
+  comps <- comps %>%
+    dplyr::select(tidyselect::any_of(species.tracked))
+
+  comps.list <- apply(
+    comps, 1, function(x){
+      idx <- which(x==1)
+      names(idx)
+    }
+  )
+  names(comps.list) <- comp_id
+
+  algae_density_list <- split(x = algae_density,
+                              f = algae_density$bottle,
+                              drop = T)
+
+  for(i in 1:length(algae_density_list)){
+    df <- algae_density_list[[i]]
+    ID <- unique(df$composition)
+    idx <- which(!is.element(unlist(comps.list[ID]), df$species))
+    if(length(idx)==0) next
+    for(j in idx){
+      new.entry <- tail(df,1)
+      new.entry$species <- comps.list[ID][j]
+      new.entry$density <- 0
+      df <- rbind(df, new.entry)
+    }
+    algae_density_list[[i]] <- df
+  }
+
+  algae_density <- do.call("rbind", algae_density_list) %>%
+    dplyr::filter(species %in% species.tracked)
+
 # SAVE --------------------------------------------------------------------
 
   add_path <- file.path( output, "flowcam" )
   dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
   #
   utils::write.csv(
-    traits,
+    algae_traits,
     file = file.path(add_path, "algae_traits.csv"),
+    row.names = FALSE
+  )
+  #
+  utils::write.csv(
+    algae_density,
+    file = file.path(add_path, "algae_density.csv"),
     row.names = FALSE
   )
   #
