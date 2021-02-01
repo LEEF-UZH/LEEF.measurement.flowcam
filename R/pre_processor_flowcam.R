@@ -16,6 +16,21 @@ pre_processor_flowcam <- function(
   message("\n########################################################\n")
   message("\nProcessing flowcam...\n")
   ##
+  
+  ##
+  processing <- file.path(normalizePath(output), "bemovi", paste0("PRE-PROCESSING.FLOWAM", ".PROCESSING"))
+  error <- file.path(normalizePath(output), "bemovi", paste0("ERROR.PRE-PROCESSING.PRE-PROCESSING", ".ERROR"))
+  on.exit(
+    {
+      if (file.exists(processing)) {
+        unlink(processing)
+        file.create(error)
+      }
+    }
+  )
+  file.create( processing )
+  ##
+
   dir.create(
     file.path(output, "flowcam"),
     recursive = TRUE,
@@ -37,6 +52,7 @@ pre_processor_flowcam <- function(
     to = file.path(output,  "flowcam","sample_metadata.yml")
   )
 
+	ublink(processing)
   message("done\n")
   message("\n########################################################\n")
 

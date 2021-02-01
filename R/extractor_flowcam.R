@@ -19,7 +19,20 @@ extractor_flowcam <- function( input, output ) {
   message("\n########################################################\n")
   message("\nExtracting flowcam...\n")
 
-
+  ##
+  processing <- file.path(normalizePath(output), "bemovi", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
+  error <- file.path(normalizePath(output), "bemovi", paste0("ERROR.EXTRACTING.FLOWCAM", ".ERROR"))
+  on.exit(
+    {
+      if (file.exists(processing)) {
+        unlink(processing)
+        file.create(error)
+      }
+    }
+  )
+  file.create( processing )
+  ##
+  
 # Get flowcam directory names ------------------------------------------------------
 
   flowcam_path <- file.path( input, "flowcam" )
@@ -282,7 +295,8 @@ extractor_flowcam <- function( input, output ) {
   )
 
 # Finalize ----------------------------------------------------------------
-
+	
+	unlink(processing)
   message("done\n")
   message("\n########################################################\n")
 
