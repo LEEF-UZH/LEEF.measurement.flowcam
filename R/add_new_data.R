@@ -35,7 +35,7 @@ add_new_data <- function(input, output) {
 #   )
 #   file.copy(
 #     from = others,
-#     to = file.path(output, "bemovi"),
+#     to = file.path(output, "flowcam"),
 #     overwrite = TRUE
 #   )
 #   unlink( others )

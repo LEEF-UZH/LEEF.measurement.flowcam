@@ -8,10 +8,11 @@
 #' @return invisibly \code{TRUE} when completed successful
 #'
 #' @importFrom data.table fread
-#' @importFrom	yaml read_yaml yaml.load
+#' @importFrom yaml read_yaml yaml.load
 #' @importFrom utils write.csv
 #' @importFrom dplyr left_join group_by summarise mutate n select filter
 #' @importFrom plyr join
+#' @importFrom magrittr %>%
 #' @import randomForest
 #'
 #' @export
@@ -19,9 +20,12 @@ extractor_flowcam <- function( input, output ) {
   message("\n########################################################\n")
   message("\nExtracting flowcam...\n")
 
+  add_path <- file.path( output, "flowcam" )
+  dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
+
   ##
-  processing <- file.path(normalizePath(output), "bemovi", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
-  error <- file.path(normalizePath(output), "bemovi", paste0("ERROR.EXTRACTING.FLOWCAM", ".ERROR"))
+  processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
+  error <- file.path(normalizePath(output), "flowcam", paste0("ERROR.EXTRACTING.FLOWCAM", ".ERROR"))
   on.exit(
     {
       if (file.exists(processing)) {
@@ -32,7 +36,7 @@ extractor_flowcam <- function( input, output ) {
   )
   file.create( processing )
   ##
-  
+
 # Get flowcam directory names ------------------------------------------------------
 
   flowcam_path <- file.path( input, "flowcam" )
@@ -251,13 +255,14 @@ extractor_flowcam <- function( input, output ) {
                               drop = T)
 
   for(i in 1:length(algae_density_list)){
+
     df <- algae_density_list[[i]]
     ID <- unique(df$composition)
     idx <- which(!is.element(unlist(comps.list[ID]), df$species))
     if(length(idx)==0) next
     for(j in idx){
       new.entry <- tail(df,1)
-      new.entry$species <- comps.list[ID][j]
+      new.entry$species <- comps.list[ID][[1]][j]
       new.entry$density <- 0
       df <- rbind(df, new.entry)
     }
@@ -269,8 +274,6 @@ extractor_flowcam <- function( input, output ) {
 
 # SAVE --------------------------------------------------------------------
 
-  add_path <- file.path( output, "flowcam" )
-  dir.create( add_path, recursive = TRUE, showWarnings = FALSE )
   #
   utils::write.csv(
     algae_traits,
@@ -295,7 +298,7 @@ extractor_flowcam <- function( input, output ) {
   )
 
 # Finalize ----------------------------------------------------------------
-	
+
 	unlink(processing)
   message("done\n")
   message("\n########################################################\n")
