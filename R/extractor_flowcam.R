@@ -68,9 +68,10 @@ extractor_flowcam <- function( input, output ) {
   }
 
   if (length(trait_files) == 0) {
+    unlink(processing)
     message("nothing to extract\n")
     message("\n########################################################\n")
-    return(invisible(FALSE))
+    return(invisible(TRUE))
   }
 
   # read in algae_traits ----------------------------------------------------------
@@ -292,9 +293,18 @@ extractor_flowcam <- function( input, output ) {
     file = file.path(add_path, "algae_metadata.csv"),
     row.names = FALSE
   )
+  to_copy <- grep(
+    list.files(
+      file.path(input, "flowcam"),
+      full.names = TRUE
+    ),
+    pattern = "_classifiers_",
+    invert = TRUE,
+    value = TRUE
+  )
   file.copy(
-    from = file.path(input, "flowcam", "sample_metadata.yml"),
-    to = file.path(output, "flowcam", "sample_metadata.yml")
+    from = to_copy,
+    to = file.path(output, "flowcam", "")
   )
 
 # Finalize ----------------------------------------------------------------
