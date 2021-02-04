@@ -109,7 +109,7 @@ extractor_flowcam <- function( input, output ) {
   metadata <- lapply(
     metadata_files,
     function(x){
-      bottle <- as.integer(dirname(x))
+      bottle <- sprintf("b_%02d", as.integer(x))
 
       md <- readLines( file.path( flowcam_path, x ) )
       md <- grep("\t", md, value = TRUE)
