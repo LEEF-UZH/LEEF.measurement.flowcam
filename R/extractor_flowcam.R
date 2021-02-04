@@ -102,7 +102,7 @@ extractor_flowcam <- function( input, output ) {
       x[[1]][[1]]
     }
   )
-  algae_traits$bottle <- as.integer(algae_traits$bottle)
+  algae_traits$bottle <- sprintf("b_%02d", as.integer(algae_traits$bottle))
 
 # read in metadata --------------------------------------------------------
 
