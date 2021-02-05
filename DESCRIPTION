@@ -1,7 +1,7 @@
 Package: LEEF.measurement.flowcam
 Type: Package
 Title: Pre-Process and Extract Flowcam Data
-Version: 0.8.10
+Version: 0.8.11
 Authors@R: c(
   person(given = "Rainer M.", family = "Krug", email = "Rainer.Krug@uzh.ch", role = c("aut", "cre"))
   )

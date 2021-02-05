@@ -109,7 +109,7 @@ extractor_flowcam <- function( input, output ) {
   metadata <- lapply(
     metadata_files,
     function(x){
-      bottle <- sprintf("b_%02d", as.integer(x))
+      bottle <- sprintf("b_%02d", as.integer(dirname(x)))
 
       md <- readLines( file.path( flowcam_path, x ) )
       md <- grep("\t", md, value = TRUE)
@@ -169,11 +169,6 @@ extractor_flowcam <- function( input, output ) {
                        "Coleps_irchel", "Coleps_viridis", "Colpidium")
   dilution <- read.csv(file.path(input, "flowcam", "flowcam_dilution.csv"))
   algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
-
-
-  # !!! The next line won't be needed in final scriupt I think !!! Ask Romana...
-
-  algae_traits$bottle <- ifelse(algae_traits$bottle<10, paste0("b_0",algae_traits$bottle),paste0("b_",algae_traits$bottle))
 
   algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
 
