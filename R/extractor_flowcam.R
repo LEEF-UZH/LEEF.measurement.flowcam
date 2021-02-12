@@ -259,6 +259,7 @@ extractor_flowcam <- function( input, output ) {
     for(j in idx){
       new.entry <- tail(df,1)
       new.entry$species <- comps.list[ID][[1]][j]
+      new.entry$count <- 0
       new.entry$density <- 0
       df <- rbind(df, new.entry)
     }
