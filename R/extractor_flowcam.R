@@ -13,6 +13,8 @@
 #' @importFrom dplyr left_join group_by summarise mutate n select filter
 #' @importFrom plyr join
 #' @importFrom magrittr %>%
+#' @importFrom stats predict
+#' @importFrom utils read.csv
 #' @import randomForest
 #'
 #' @export
@@ -161,13 +163,13 @@ extractor_flowcam <- function( input, output ) {
 
 # Species ID --------------------------------------------------------------
 
-  design <- read.csv(file.path(input, "flowcam", "experimental_design.csv"))
-  comps <- read.csv(file.path(input, "flowcam", "compositions.csv"))
+  design <- utils::read.csv(file.path(input, "flowcam", "experimental_design.csv"))
+  comps <- utils::read.csv(file.path(input, "flowcam", "compositions.csv"))
   species.tracked <- c("Chlamydomonas", "Cosmarium", "Cryptomonas", "Desmodesmus", "Dexiostoma",
                        "Loxocephallus", "Monoraphidium", "Staurastrum1", "Staurastrum2", "Tetrahymena",
                        "airbubbles","ColpidiumVacuoles","Debris","OtherCiliate","ChlamydomonasClumps",
                        "Coleps_irchel", "Coleps_viridis", "Colpidium")
-  dilution <- read.csv(file.path(input, "flowcam", "flowcam_dilution.csv"))
+  dilution <- utils::read.csv(file.path(input, "flowcam", "flowcam_dilution.csv"))
   algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
 
   algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
@@ -208,12 +210,12 @@ extractor_flowcam <- function( input, output ) {
     composition_id <- unique(df$composition) # a char between c_01 and c_16
 
     if (temperature_treatment == "constant"){
-      df$species <- predict(classifiers_constant[[composition_id]], df) # species prediction
-      df$species_probability <- apply(predict(classifiers_constant[[composition_id]], df, type = "prob"),
+      df$species <- stats::predict(classifiers_constant[[composition_id]], df) # species prediction
+      df$species_probability <- apply(stats::predict(classifiers_constant[[composition_id]], df, type = "prob"),
                                       1,max) # probability of each species prediction
     } else {
-      df$species <- predict(classifiers_increasing[[composition_id]], df) # species prediction
-      df$species_probability <- apply(predict(classifiers_increasing[[composition_id]], df, type = "prob"),
+      df$species <- stats::predict(classifiers_increasing[[composition_id]], df) # species prediction
+      df$species_probability <- apply(stats::predict(classifiers_increasing[[composition_id]], df, type = "prob"),
                                       1,max) # probability of each species prediction
     }
     algae_traits_list[[i]] <- df
