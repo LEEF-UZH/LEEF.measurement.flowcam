@@ -21,7 +21,7 @@ Imports:
     plyr,
     dplyr,
     magrittr,
-    randomForest,
+    e1071,
     tidyselect,
     stats
 Encoding: UTF-8

@@ -1,0 +1,212 @@
+#' Preprocessor flowcam data
+#'
+#' extract data from all \code{*_classes_*_data.csv} files
+#'
+#' @param input directory from which to read the data
+#' @param output directory to which to write the data
+#'
+#' @return invisibly \code{TRUE} when completed successful
+#'
+#' @importFrom data.table fread
+#' @importFrom yaml read_yaml yaml.load
+#' @importFrom utils write.csv
+#' @importFrom dplyr left_join group_by summarise mutate n select filter
+#' @importFrom plyr join ldply
+#' @importFrom magrittr %>%
+#' @importFrom stats predict
+#' @importFrom utils read.csv
+#'
+#' @export
+extractor_flowcam_prepare <- function(input, output) {
+  message("\n########################################################\n")
+  message("\nExtracting flowcam...\n")
+
+  add_path <- file.path(output, "flowcam")
+  dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
+
+  ##
+  processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING_PREPARE.FLOWCAM", ".PROCESSING"))
+  error <- file.path(normalizePath(output), "flowcam", paste0("ERROR.EXTRACTING_PREPARE.FLOWCAM", ".ERROR"))
+  on.exit({
+      if (file.exists(processing)) {
+        unlink(processing)
+        file.create(error)
+      }
+    }
+  )
+  file.create(processing)
+  ##
+
+# Get flowcam directory names ------------------------------------------------------
+
+  flowcam_path <- file.path(input, "flowcam")
+
+  trait_files <- list.files(
+    path = flowcam_path,
+    pattern = "\\.csv$",
+    recursive = TRUE,
+    full.names = TRUE
+  )
+  trait_files <- grep(
+    pattern = "composition|experimental|dilution",
+    trait_files,
+    invert = TRUE,
+    value = TRUE
+  )
+  trait_files <- grep(
+    pattern = "_summary.csv",
+    trait_files,
+    value = TRUE,
+    invert = TRUE
+  )
+
+  metadata_files <- list.files(
+    path = flowcam_path,
+    pattern = "_summary\\.txt$",
+    recursive = TRUE,
+    full.names = TRUE
+  )
+
+  if (length(trait_files) != length(metadata_files)) {
+    message("ERROR - unequal number of trait and metadata files. Processing Aborted!!!\n")
+    message("\n########################################################\n")
+    return(invisible(FALSE))
+  }
+
+  if (length(trait_files) == 0) {
+    unlink(processing)
+    message("nothing to extract\n")
+    message("\n########################################################\n")
+    return(invisible(TRUE))
+  }
+
+  # additional files
+
+  dilution_file <- file.path(flowcam_path, "flowcam_dilution.csv")
+
+  dir.create(
+    path = file.path(output, "flowcam"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+  file.copy(
+    from = list.files(
+      path = file.path(input, "flowcam"),
+      recursive = FALSE,
+      full.names = TRUE
+    ),
+    to = file.path(output, "flowcam", ".")
+  )
+
+#############################################################
+### <<< BEGIN SCRIPT ########################################
+#############################################################
+
+# Read accompanying files
+
+dilution <- read.csv(dilution_file)
+
+#############################################################
+#  Read in traits -------------------------------------------------------------------
+#############################################################
+
+# read in all data frames
+algae_traits <- lapply(trait_files, data.table::fread)
+
+# bind data frames to one large data frame
+algae_traits <- dplyr::bind_rows(algae_traits)
+
+# rename columns
+colnames(algae_traits) <- make.names(colnames(algae_traits))
+colnames(algae_traits) <- gsub("\\.$", "", colnames(algae_traits))
+colnames(algae_traits) <- gsub("\\.\\.", ".", colnames(algae_traits))
+colnames(algae_traits) <- gsub("\\.", "_", colnames(algae_traits))
+
+names(algae_traits)[names(algae_traits) == "Date"] <- "Date_Flowcam"
+names(algae_traits)[names(algae_traits) == "Timestamp"] <- "Timestamp_Flowcam"
+
+# extract information on date and microcosm from the column "Image_File"
+
+algae_traits$temp_ID <- gsub(x = algae_traits$Image_File, pattern = "\\_", replacement = " ")
+algae_traits$bottle <- sapply(strsplit(algae_traits$temp_ID, " "), "[", 1)
+
+algae_traits <- subset(algae_traits, select = -temp_ID)
+
+
+#############################################################
+# Read in meta-data --------------------------------------------------------------------
+#############################################################
+
+
+# read in the files with the meta-data (i.e. txt-file in each subfolder)
+
+
+
+
+# extract information on bottle from the name of the file (file names are in metadata_files)
+# read in the lines of each txt-file
+# lines have parameter and value separated by ":"
+# split at ":" and get parameter and value
+
+meta_data <- plyr::ldply(.data = metadata_files,
+                   function(x) {
+                     label <- gsub(x = x, pattern = "\\/", replacement = " ")
+                     label <- gsub(x = label, pattern = "\\_", replacement = " ")
+                     pieces <- strsplit(label, " ")
+                     bottle <- sapply(pieces, "[", 4)
+                     file.data <- sapply(x, readLines)
+                     file.data <- file.data[-1, ]
+                     pieces <- strsplit(file.data, "\\:")
+                     parameter <- sapply(pieces, "[", 1)
+                     value <- sapply(pieces, "[", 2)
+                     meta_data <- data.frame(bottle = bottle,
+                                             parameter = parameter,
+                                             value = value)
+
+                     return(meta_data)})
+
+# some lines are headings or subheadings and have NAs at parameter and/or value: remove these lines
+meta_data <- subset(meta_data, !is.na(value))
+meta_data$parameter <- gsub(x = meta_data$parameter, pattern = "\t", replacement = " ")
+
+
+# get data on volume imaged
+volume_imaged <- meta_data[meta_data$parameter == "Fluid Volume Imaged", ]
+volume_imaged$value <- sapply(strsplit(volume_imaged$value, " "), "[", 2)
+volume_imaged <- subset(volume_imaged, select = -parameter)
+volume_imaged$value <- as.numeric(volume_imaged$value)
+names(volume_imaged)[names(volume_imaged) == "value"] <- "volume_imaged"
+
+algae_traits <- plyr::join(algae_traits, volume_imaged, by = "bottle")
+
+
+
+# !!! The next line won't be needed in final scriupt I think !!! Ask Romana...
+algae_traits$bottle <- ifelse(
+  as.numeric(algae_traits$bottle) < 10,
+  paste0("b_0", algae_traits$bottle),
+  paste0("b_", algae_traits$bottle)
+)
+
+algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
+
+#############################################################
+### >>> END SCRIPT ##########################################
+#############################################################
+
+
+# SAVE --------------------------------------------------------------------
+
+  saveRDS(
+    algae_traits,
+    file = file.path(output, "flowcam", "algae_traits_prepared.rds")
+  )
+
+# Finalize ----------------------------------------------------------------
+
+  unlink(processing)
+  message("done\n")
+  message("\n########################################################\n")
+
+  invisible(TRUE)
+}
