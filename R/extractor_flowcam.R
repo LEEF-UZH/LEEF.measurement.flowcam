@@ -42,6 +42,7 @@ extractor_flowcam <- function(input, output) {
 #  Run functions --------------------------------------------------------------------
 
   extractor_flowcam_prepare(input, output)
+  extractor_flowcam_filter(input, output)
   extractor_flowcam_classify(input, output)
 
 # Finalize ----------------------------------------------------------------

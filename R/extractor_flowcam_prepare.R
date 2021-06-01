@@ -11,7 +11,7 @@
 #' @importFrom yaml read_yaml yaml.load
 #' @importFrom utils write.csv
 #' @importFrom dplyr left_join group_by summarise mutate n select filter
-#' @importFrom plyr join ldply
+#' @importFrom plyr join
 #' @importFrom magrittr %>%
 #' @importFrom stats predict
 #' @importFrom utils read.csv
@@ -19,7 +19,7 @@
 #' @export
 extractor_flowcam_prepare <- function(input, output) {
   message("\n########################################################\n")
-  message("\nExtracting flowcam...\n")
+  message("\n   preparing flowcam...\n")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
@@ -84,20 +84,6 @@ extractor_flowcam_prepare <- function(input, output) {
 
   dilution_file <- file.path(flowcam_path, "flowcam_dilution.csv")
 
-  dir.create(
-    path = file.path(output, "flowcam"),
-    recursive = TRUE,
-    showWarnings = FALSE
-  )
-  file.copy(
-    from = list.files(
-      path = file.path(input, "flowcam"),
-      recursive = FALSE,
-      full.names = TRUE
-    ),
-    to = file.path(output, "flowcam", ".")
-  )
-
 #############################################################
 ### <<< BEGIN SCRIPT ########################################
 #############################################################
@@ -148,33 +134,35 @@ algae_traits <- subset(algae_traits, select = -temp_ID)
 # lines have parameter and value separated by ":"
 # split at ":" and get parameter and value
 
-meta_data <- plyr::ldply(.data = metadata_files,
-                   function(x) {
-                     label <- gsub(x = x, pattern = "\\/", replacement = " ")
-                     label <- gsub(x = label, pattern = "\\_", replacement = " ")
-                     pieces <- strsplit(label, " ")
-                     bottle <- sapply(pieces, "[", 4)
-                     file.data <- sapply(x, readLines)
-                     file.data <- file.data[-1, ]
-                     pieces <- strsplit(file.data, "\\:")
-                     parameter <- sapply(pieces, "[", 1)
-                     value <- sapply(pieces, "[", 2)
-                     meta_data <- data.frame(bottle = bottle,
-                                             parameter = parameter,
-                                             value = value)
+meta_data <- lapply(
+  metadata_files,
+  function(fn) {
+    bottle <- strsplit(
+      basename(fn),
+      "_"
+    )[[1]][[1]]
 
-                     return(meta_data)})
+    file_data <- readLines(fn)
+    file_data <- gsub("\\t", "", file_data)
+    file_data <- strsplit(file_data, "\\:")
+    parameter <- trimws(sapply(file_data, "[", 1))
+    value <- trimws(sapply(file_data, "[", 2))
+    parameter <- parameter[!is.na(value)]
+    value <- value[!is.na(value)]
+    meta_data <- data.frame(bottle = bottle,
+                            parameter = parameter,
+                            value = value)
 
-# some lines are headings or subheadings and have NAs at parameter and/or value: remove these lines
-meta_data <- subset(meta_data, !is.na(value))
-meta_data$parameter <- gsub(x = meta_data$parameter, pattern = "\t", replacement = " ")
-
+    return(meta_data)
+  }
+)
+meta_data <- do.call(rbind, meta_data)
 
 # get data on volume imaged
 volume_imaged <- meta_data[meta_data$parameter == "Fluid Volume Imaged", ]
-volume_imaged$value <- sapply(strsplit(volume_imaged$value, " "), "[", 2)
-volume_imaged <- subset(volume_imaged, select = -parameter)
+volume_imaged$value <- sapply(strsplit(volume_imaged$value, " "), "[", 1)
 volume_imaged$value <- as.numeric(volume_imaged$value)
+volume_imaged <- subset(volume_imaged, select = -parameter)
 names(volume_imaged)[names(volume_imaged) == "value"] <- "volume_imaged"
 
 algae_traits <- plyr::join(algae_traits, volume_imaged, by = "bottle")
@@ -199,13 +187,19 @@ algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
 
   saveRDS(
     algae_traits,
-    file = file.path(output, "flowcam", "algae_traits_prepared.rds")
+    file = file.path(add_path, "algae_traits_prepared.rds")
+  )
+
+  utils::write.csv(
+    meta_data,
+    file = file.path(add_path, "algae_metadata.csv"),
+    row.names = FALSE
   )
 
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("done\n")
+  message("   done\n")
   message("\n########################################################\n")
 
   invisible(TRUE)

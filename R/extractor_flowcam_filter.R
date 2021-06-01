@@ -19,7 +19,7 @@
 #' @export
 extractor_flowcam_filter <- function(input, output) {
   message("\n########################################################\n")
-  message("\nExtracting flowcam...\n")
+  message("\n   filter flowcam...\n")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
@@ -127,7 +127,7 @@ algae_traits <- do.call("rbind", atl_filtered)
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("done\n")
+  message("   done\n")
   message("\n########################################################\n")
 
   invisible(TRUE)

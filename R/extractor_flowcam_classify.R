@@ -20,7 +20,7 @@
 #' @export
 extractor_flowcam_classify <- function(input, output) {
   message("\n########################################################\n")
-  message("\nExtracting flowcam...\n")
+  message("\n   classifying flowcam...\n")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
@@ -193,11 +193,6 @@ algae_density <- do.call("rbind", algae_density_list) %>%
     row.names = FALSE
   )
   #
-  utils::write.csv(
-    metadata,
-    file = file.path(add_path, "algae_metadata.csv"),
-    row.names = FALSE
-  )
   to_copy <- grep(
     list.files(
       file.path(input, "flowcam"),
@@ -215,7 +210,7 @@ algae_density <- do.call("rbind", algae_density_list) %>%
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("done\n")
+  message("   done\n")
   message("\n########################################################\n")
 
   invisible(TRUE)
