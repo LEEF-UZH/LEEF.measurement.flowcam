@@ -19,11 +19,14 @@
 #'
 #' @export
 extractor_flowcam_classify <- function(input, output) {
-  message("\n########################################################\n")
-  message("\n   classifying flowcam...\n")
+  message("########################################################")
+  message("   classifying flowcam...")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
+  loggit::set_logfile(file.path(add_path, "flowcam.log"))
+
+  load_parameter(file.path(input, "flowcam", "flowcam.yml"))
 
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING_CLASSIFY.FLOWCAM", ".PROCESSING"))
@@ -50,8 +53,8 @@ extractor_flowcam_classify <- function(input, output) {
   composition_file <- file.path(flowcam_path, "compositions.csv")
 
 # the classifiers for increasing temperatures will have to be updated during experiment!!
-  name_constant <- file.path(flowcam_path, "svm_flowcam_classifiers_18c.rds")
-  name_increasing <- file.path(flowcam_path, "svm_flowcam_classifiers_increasing_best_available.rds")
+  name_constant <- file.path(flowcam_path, par_classifier_constant())
+  name_increasing <- file.path(flowcam_path, par_classifier_increasing())
 
 #############################################################
 ### <<< BEGIN SCRIPT ########################################
@@ -210,8 +213,8 @@ algae_density <- do.call("rbind", algae_density_list) %>%
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("   done\n")
-  message("\n########################################################\n")
+  message("   done")
+  message("########################################################")
 
   invisible(TRUE)
 }

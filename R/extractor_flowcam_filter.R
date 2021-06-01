@@ -18,11 +18,12 @@
 #'
 #' @export
 extractor_flowcam_filter <- function(input, output) {
-  message("\n########################################################\n")
-  message("\n   filter flowcam...\n")
+  message("########################################################")
+  message("   filter flowcam...")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
+  loggit::set_logfile(file.path(add_path, "flowcam.log"))
 
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING_FILTER.FLOWCAM", ".PROCESSING"))
@@ -127,8 +128,8 @@ algae_traits <- do.call("rbind", atl_filtered)
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("   done\n")
-  message("\n########################################################\n")
+  message("   done")
+  message("########################################################")
 
   invisible(TRUE)
 }

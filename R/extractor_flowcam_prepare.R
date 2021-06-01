@@ -18,11 +18,12 @@
 #'
 #' @export
 extractor_flowcam_prepare <- function(input, output) {
-  message("\n########################################################\n")
-  message("\n   preparing flowcam...\n")
+  message("########################################################")
+  message("   preparing flowcam...")
 
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
+  loggit::set_logfile(file.path(add_path, "flowcam.log"))
 
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING_PREPARE.FLOWCAM", ".PROCESSING"))
@@ -68,15 +69,15 @@ extractor_flowcam_prepare <- function(input, output) {
   )
 
   if (length(trait_files) != length(metadata_files)) {
-    message("ERROR - unequal number of trait and metadata files. Processing Aborted!!!\n")
-    message("\n########################################################\n")
+    message("ERROR - unequal number of trait and metadata files. Processing Aborted!!!")
+    message("########################################################")
     return(invisible(FALSE))
   }
 
   if (length(trait_files) == 0) {
     unlink(processing)
-    message("nothing to extract\n")
-    message("\n########################################################\n")
+    message("nothing to extract")
+    message("########################################################")
     return(invisible(TRUE))
   }
 
@@ -199,8 +200,8 @@ algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("   done\n")
-  message("\n########################################################\n")
+  message("   done")
+  message("########################################################")
 
   invisible(TRUE)
 }

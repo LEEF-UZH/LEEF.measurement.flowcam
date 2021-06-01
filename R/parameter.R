@@ -18,15 +18,15 @@ par_template <- function(value) {
   parName <- as.character(parName)
   parName <- utils::tail(parName, 1)
   parName <- gsub("par_", "", parName)
-  if ( missing(value) ) {
+  if (missing(value)) {
     if (!exists(parName, envir = .FLOWCAM_CACHE, inherits = FALSE)) {
-      stop("Parameter '", parName, "' not set!\n", "Set by using '", parName, "(value)' before usage!")
+      stop("Parameter '", parName, "' not set!", "Set by using '", parName, "(value)' before usage!")
     }
   } else {
     assign(parName, value, envir = .FLOWCAM_CACHE)
   }
   result <- base::get(parName, envir = .FLOWCAM_CACHE, inherits = FALSE)
-  return( result )
+  return(result)
 }
 
 #' Save parameter into \code{.yaml} file
@@ -56,9 +56,9 @@ save_parameter <- function(file = "parameter.yaml") {
 #'
 #' @examples
 load_parameter <- function(file = "parameter.yaml") {
-  p <- yaml::read_yaml( file )
+  p <- yaml::read_yaml(file)
   list2env(p, envir = .FLOWCAM_CACHE)
-  invisible( TRUE )
+  invisible(TRUE)
 }
 
 
@@ -85,5 +85,21 @@ print_parameter <- function(
       print(result)
     }
   }
-  return( invisible(result) )
+  return(invisible(result))
 }
+
+
+
+#
+#' @name par_classifier_constant
+#' @title Name of classifier file for constant temperature treatment
+#' @export
+par_classifier_constant <- par_template
+par_classifier_constant("")
+
+#
+#' @name par_classifier_increasing
+#' @title Name of classifier file for increasing temperature treatment
+#' @export
+par_classifier_increasing <- par_template
+par_classifier_increasing("")

@@ -16,14 +16,19 @@
 #' @importFrom stats predict
 #' @importFrom utils read.csv
 #' @import randomForest
+#' @import loggit
 #'
 #' @export
 extractor_flowcam <- function(input, output) {
-  message("\n########################################################\n")
-  message("\nExtracting flowcam...\n")
-
   add_path <- file.path(output, "flowcam")
   dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
+
+  loggit::set_logfile(file.path(add_path, "flowcam.log"))
+
+  message("########################################################")
+  message("Extracting flowcam...")
+
+
 
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
@@ -48,8 +53,8 @@ extractor_flowcam <- function(input, output) {
 # Finalize ----------------------------------------------------------------
 
   unlink(processing)
-  message("done\n")
-  message("\n########################################################\n")
+  message("done")
+  message("########################################################")
 
   invisible(TRUE)
 }

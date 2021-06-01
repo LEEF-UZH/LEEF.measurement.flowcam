@@ -13,24 +13,24 @@ pre_processor_flowcam <- function(
   input,
   output
 ) {
-  message("\n########################################################\n")
-  message("\nProcessing flowcam...\n")
+  message("########################################################")
+  message("Processing flowcam...")
   ##
 
   if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
-    message("\nEmpty or missing flowcam directory - nothing to do.\n")
-    message("\ndone\n")
-    message("########################################################\n")
+    message("Empty or missing flowcam directory - nothing to do.")
+    message("done")
+    message("########################################################")
     return(invisible(TRUE))
   }
-  
+
   dir.create(
     file.path(output, "flowcam"),
     recursive = TRUE,
     showWarnings = FALSE
   )
+  loggit::set_logfile(file.path(output, "flowcam", "flowcam.log"))
 
- 
   file.copy(
     file.path( input, "..", "00.general.parameter", "." ),
     file.path( output, "flowcam" ),
@@ -43,8 +43,8 @@ pre_processor_flowcam <- function(
     recursive = TRUE
   )
 
-  message("done\n")
-  message("\n########################################################\n")
+  message("done")
+  message("########################################################")
 
   invisible(TRUE)
 }
