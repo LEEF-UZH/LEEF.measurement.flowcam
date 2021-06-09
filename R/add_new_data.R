@@ -54,8 +54,7 @@ add_new_data <- function(input, output) {
       processing <- file.path(input, paste0("CHECKING.", f, ".CHECKING"))
       error <- file.path(input, paste0("ERROR.", f, ".txt"))
 
-      on.exit(
-        {
+      on.exit({
           if (file.exists(processing)) {
             unlink(processing)
             utils::capture.output(print(result), file = error)
@@ -109,7 +108,8 @@ add_new_data <- function(input, output) {
         unlink(processing)
       }
       return(result)
-    }
+    },
+    mc.cores = getOption("mc.cores")
   )
   names(ok) <- folder
   return(ok)
