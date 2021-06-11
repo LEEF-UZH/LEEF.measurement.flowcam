@@ -107,15 +107,16 @@ for (i in seq_along(algae_traits_list)) {
 
   temperature_treatment <- unique(df$temperature) # either "constant" or "increasing"
   composition_id <- unique(df$composition) # a char between c_01 and c_16
+  noNAs <- !rowSums(is.na(df)) > 0
 
   if (temperature_treatment == "constant") {
     pr <- predict(classifiers_constant[[composition_id]], df, probability = TRUE)
-    df$species <- pr # species prediction
-    df$species_probability <- apply(attributes(pr)$probabilities, 1, max) # probability of each species prediction
+    df$species[noNAs] <- pr # species prediction
+    df$species_probability[noNAs] <- apply(attributes(pr)$probabilities, 1, max) # probability of each species prediction
   } else {
     pr <- predict(classifiers_increasing[[composition_id]], df, probability = TRUE)
-    df$species <- pr # species prediction
-    df$species_probability <- apply(attributes(pr)$probabilities, 1, max)  # probability of each species prediction
+    df$species[noNAs] <- pr # species prediction
+    df$species_probability[noNAs] <- apply(attributes(pr)$probabilities, 1, max)  # probability of each species prediction
   }
   algae_traits_list[[i]] <- df
 }
