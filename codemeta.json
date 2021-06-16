@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam",
   "issueTracker": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.13",
+  "version": "0.8.14",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
