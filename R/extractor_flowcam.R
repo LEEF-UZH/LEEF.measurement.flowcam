@@ -21,12 +21,26 @@
 #' @export
 extractor_flowcam <- function(input, output) {
   add_path <- file.path(output, "flowcam")
-  dir.create(add_path, recursive = TRUE, showWarnings = FALSE)
-
+  dir.create(
+    add_path,
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
   loggit::set_logfile(file.path(add_path, "flowcam.log"))
 
   message("########################################################")
   message("Extracting flowcam...")
+
+  if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
+    message("Empty or missing flowcam directory - nothing to do.")
+    message("done")
+    message("########################################################")
+    return(invisible(TRUE))
+  }
+
+
+
+
 
 
 

@@ -13,6 +13,13 @@ pre_processor_flowcam <- function(
   input,
   output
 ) {
+  dir.create(
+    file.path(output, "flowcam"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+  loggit::set_logfile(file.path(output, "flowcam", "flowcam.log"))
+
   message("########################################################")
   message("Processing flowcam...")
   ##
@@ -24,12 +31,7 @@ pre_processor_flowcam <- function(
     return(invisible(TRUE))
   }
 
-  dir.create(
-    file.path(output, "flowcam"),
-    recursive = TRUE,
-    showWarnings = FALSE
-  )
-  loggit::set_logfile(file.path(output, "flowcam", "flowcam.log"))
+
 
   file.copy(
     file.path( input, "..", "00.general.parameter", "." ),
