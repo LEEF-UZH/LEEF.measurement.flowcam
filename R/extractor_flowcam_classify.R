@@ -181,6 +181,9 @@ algae_density <- do.call("rbind", algae_density_list) %>%
 ### >>> END SCRIPT ##########################################
 #############################################################
 
+timestamp <- yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
+
+algae_density$timestamp <- timestamp
 
 # SAVE --------------------------------------------------------------------
 
