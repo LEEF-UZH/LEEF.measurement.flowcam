@@ -24,7 +24,7 @@ pre_processor_flowcam <- function(
   message("Processing flowcam...")
   ##
 
-  if ( length( list.files( file.path(input, "flowcam") ) ) == 1 ) {
+  if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
     message("Empty or missing flowcam directory - nothing to do.")
     message("done")
     message("########################################################")

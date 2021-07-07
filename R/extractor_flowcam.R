@@ -31,7 +31,7 @@ extractor_flowcam <- function(input, output) {
   message("########################################################")
   message("Extracting flowcam...")
 
-  if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
+  if ( length( list.files( file.path(input, "flowcam") ) ) == 1 ) {
     message("Empty or missing flowcam directory - nothing to do.")
     message("done")
     message("########################################################")
