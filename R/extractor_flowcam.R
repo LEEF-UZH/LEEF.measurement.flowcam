@@ -38,12 +38,6 @@ extractor_flowcam <- function(input, output) {
     return(invisible(TRUE))
   }
 
-
-
-
-
-
-
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
   error <- file.path(normalizePath(output), "flowcam", paste0("ERROR.EXTRACTING.FLOWCAM", ".ERROR"))
