@@ -143,7 +143,7 @@ algae_density <- algae_traits %>%
 species.tracked <- c("Chlamydomonas", "Cosmarium", "Cryptomonas", "Desmodesmus", "Dexiostoma",
                      "Loxocephallus", "Monoraphidium", "Staurastrum1", "Staurastrum2", "Tetrahymena",
                      "airbubbles", "ColpidiumVacuoles", "Debris", "OtherCiliate", "ChlamydomonasClumps",
-                     "Coleps_irchel", "Coleps_viridis", "Colpidium")
+                     "Coleps_irchel", "Coleps_viridis", "Colpidium", "DigestedAlgae")
 
 comp_id <- unique(comps$composition)
 comps <- comps %>%
