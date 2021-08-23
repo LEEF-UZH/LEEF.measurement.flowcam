@@ -1,0 +1,21 @@
+classifier_increasing: svm_flowcam_classifiers_increasing_best_available.rds
+classifier_constant: svm_flowcam_classifiers_18c.rds
+
+species_tracked:  
+- Chlamydomonas
+- Cosmarium
+- Cryptomonas
+- Desmodesmus
+- "Dexiostoma- Loxocephallus"
+- Monoraphidium
+- Staurastrum1
+- Staurastrum2
+- "Tetrahymena- airbubbles"
+- ColpidiumVacuoles
+- Debris
+- OtherCiliate
+- ChlamydomonasClumps
+- Coleps_irchel
+- Coleps_viridis
+- Colpidium
+- DigestedAlgae
