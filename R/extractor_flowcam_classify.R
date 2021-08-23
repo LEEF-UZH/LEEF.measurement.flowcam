@@ -140,14 +140,10 @@ algae_density <- algae_traits %>%
 # -----------------------------------------------------------------------------------------------------
 # add density = 0 for extinct species ------------------------------------------------------------
 
-species.tracked <- c("Chlamydomonas", "Cosmarium", "Cryptomonas", "Desmodesmus", "Dexiostoma",
-                     "Loxocephallus", "Monoraphidium", "Staurastrum1", "Staurastrum2", "Tetrahymena",
-                     "airbubbles", "ColpidiumVacuoles", "Debris", "OtherCiliate", "ChlamydomonasClumps",
-                     "Coleps_irchel", "Coleps_viridis", "Colpidium", "DigestedAlgae")
 
 comp_id <- unique(comps$composition)
 comps <- comps %>%
-  dplyr::select(tidyselect::any_of(species.tracked))
+  dplyr::select(tidyselect::any_of(par_species_tracked()))
 
 comps.list <- apply(comps, 1, function(x) {
   idx <- which(x == 1)
@@ -175,7 +171,7 @@ for (i in seq_along(algae_density_list)) {
 }
 
 algae_density <- do.call("rbind", algae_density_list) %>%
-  filter(species %in% species.tracked)
+  filter(species %in% par_species_tracked())
 
 #############################################################
 ### >>> END SCRIPT ##########################################

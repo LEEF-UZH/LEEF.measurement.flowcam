@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam",
   "issueTracker": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.21",
+  "version": "0.8.22",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -182,5 +182,5 @@
     }
   ],
   "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/master/Readme.md",
-  "fileSize": "41.149KB"
+  "fileSize": "41.167KB"
 }

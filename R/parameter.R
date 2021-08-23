@@ -103,3 +103,10 @@ par_classifier_constant("")
 #' @export
 par_classifier_increasing <- par_template
 par_classifier_increasing("")
+
+#
+#' @name par_species_tracked
+#' @title Species tracked
+#' @export
+par_species_tracked <- par_template
+par_species_tracked("")
