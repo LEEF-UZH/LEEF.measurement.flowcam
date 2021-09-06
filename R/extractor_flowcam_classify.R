@@ -10,7 +10,8 @@
 #' @importFrom data.table fread
 #' @importFrom yaml read_yaml yaml.load
 #' @importFrom utils write.csv
-#' @importFrom dplyr left_join group_by summarise mutate n select filter
+#' @importFrom dplyr left_join group_by summarise mutate n select filter full_join
+#' @importFrom purrr reduce
 #' @importFrom plyr join ldply
 #' @importFrom magrittr %>%
 #' @importFrom stats predict
@@ -113,17 +114,23 @@ for (i in seq_along(algae_traits_list)) {
     pr <- predict(classifiers_constant[[composition_id]], df, probability = TRUE)
     df$species[noNAs] <- as.character(pr) # species prediction
     df$species_probability[noNAs] <- apply(attributes(pr)$probabilities, 1, max) # probability of each species prediction
+    probabilities <- attributes(pr)$probabilities
+    colnames(probabilities) <- paste0(colnames(probabilities),"_prob")
+    df <- cbind(df, probabilities)
   } else {
     pr <- predict(classifiers_increasing[[composition_id]], df, probability = TRUE)
     df$species[noNAs] <- as.character(pr) # species prediction
     df$species_probability[noNAs] <- apply(attributes(pr)$probabilities, 1, max)  # probability of each species prediction
+    probabilities <- attributes(pr)$probabilities
+    colnames(probabilities) <- paste0(colnames(probabilities),"_prob")
+    df <- cbind(df, probabilities)
   }
   algae_traits_list[[i]] <- df
 }
 
 # 4. Merge the 32 dfs back into a single df: algae_traits
 
-algae_traits <- do.call("rbind", algae_traits_list)
+algae_traits <- purrr::reduce(algae_traits_list, dplyr::full_join)
 
 #############################################################
 # calculate species densities -------------------------------------------------------------------------

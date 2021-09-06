@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam",
   "issueTracker": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.22",
+  "version": "0.8.23",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.0 (2021-05-18)",
+  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
   "author": [
     {
       "@type": "Person",
@@ -129,6 +129,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "purrr",
+      "name": "purrr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=purrr"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
       "provider": {
@@ -182,5 +194,5 @@
     }
   ],
   "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/master/Readme.md",
-  "fileSize": "41.604KB"
+  "fileSize": "42.033KB"
 }
