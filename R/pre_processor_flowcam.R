@@ -13,6 +13,14 @@ pre_processor_flowcam <- function(
   input,
   output
 ) {
+
+  if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
+    message("Empty or missing flowcam directory - nothing to do.")
+    message("done")
+    message("########################################################")
+    return(invisible(TRUE))
+  }
+
   dir.create(
     file.path(output, "flowcam"),
     recursive = TRUE,
@@ -23,15 +31,6 @@ pre_processor_flowcam <- function(
   message("########################################################")
   message("Processing flowcam...")
   ##
-
-  if ( length( list.files( file.path(input, "flowcam") ) ) == 0 ) {
-    message("Empty or missing flowcam directory - nothing to do.")
-    message("done")
-    message("########################################################")
-    return(invisible(TRUE))
-  }
-
-
 
   file.copy(
     file.path( input, "..", "00.general.parameter", "." ),

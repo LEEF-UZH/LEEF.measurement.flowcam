@@ -26,17 +26,19 @@ extractor_flowcam <- function(input, output) {
     recursive = TRUE,
     showWarnings = FALSE
   )
-  loggit::set_logfile(file.path(add_path, "flowcam.log"))
-
-  message("########################################################")
-  message("Extracting flowcam...")
-
   if ( length( list.files( file.path(input, "flowcam") ) ) == 1 ) {
     message("Empty or missing flowcam directory - nothing to do.")
     message("done")
     message("########################################################")
     return(invisible(TRUE))
   }
+
+
+  loggit::set_logfile(file.path(add_path, "flowcam.log"))
+
+  message("########################################################")
+  message("Extracting flowcam...")
+
 
   ##
   processing <- file.path(normalizePath(output), "flowcam", paste0("EXTRACTING.FLOWCAM", ".PROCESSING"))
