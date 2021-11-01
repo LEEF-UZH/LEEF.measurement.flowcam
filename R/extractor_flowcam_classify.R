@@ -139,7 +139,15 @@ algae_traits <- purrr::reduce(algae_traits_list, dplyr::full_join)
 algae_density <- algae_traits %>%
   group_by(
     Date_Flowcam,
-    species, bottle, composition, temperature, incubator, volume_imaged, dilution_factor, richness) %>%
+    species,
+    bottle,
+    composition,
+    temperature,
+    incubator,
+    volume_imaged,
+    dilution_factor,
+    richness
+  ) %>%
   summarise(count = n()) %>%
   mutate(density = count * dilution_factor / volume_imaged)
 

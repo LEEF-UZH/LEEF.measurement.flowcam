@@ -93,6 +93,10 @@ extractor_flowcam_prepare <- function(input, output) {
 
 dilution <- read.csv(dilution_file)
 
+if (!all(c("bottle", "dilution_factor") %in% names(dilution))) {
+  dilution <- read.csv(dilution_file, sep = ";")
+}
+
 #############################################################
 #  Read in traits -------------------------------------------------------------------
 #############################################################
