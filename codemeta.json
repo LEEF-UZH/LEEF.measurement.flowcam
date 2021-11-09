@@ -191,8 +191,20 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=loggit"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "randomForest",
+      "name": "randomForest",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=randomForest"
     }
   ],
   "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/master/Readme.md",
-  "fileSize": "42.182KB"
+  "fileSize": "42.2KB"
 }

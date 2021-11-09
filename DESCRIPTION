@@ -25,7 +25,8 @@ Imports:
     e1071,
     tidyselect,
     stats,
-    loggit
+    loggit,
+    randomForest
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
