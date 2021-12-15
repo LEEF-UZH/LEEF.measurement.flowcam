@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam",
   "issueTracker": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.26",
+  "version": "0.8.28",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
+  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
   "author": [
     {
       "@type": "Person",
@@ -206,5 +206,5 @@
     }
   ],
   "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/master/Readme.md",
-  "fileSize": "42.2KB"
+  "fileSize": "47.793KB"
 }
