@@ -91,8 +91,8 @@ result <- LEEF.measurement.flowcam::classify(
   species_tracked = par_species_tracked()
 )
 
-algae_traits <- result$algae_traits
-algae_density <- result$algae_density
+# algae_traits <- result$algae_traits
+# algae_density <- result$algae_density
 
 ###
 ### This has been re-located into the function `classify`
@@ -205,20 +205,20 @@ algae_density <- result$algae_density
 
 timestamp <- yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
 
-algae_traits$timestamp <- timestamp
-algae_density$timestamp <- timestamp
+result$algae_traits$timestamp <- timestamp
+result$algae_density$timestamp <- timestamp
 
 # SAVE --------------------------------------------------------------------
 
   #
   utils::write.csv(
-    algae_traits,
+    result$algae_traits,
     file = file.path(add_path, "algae_traits.csv"),
     row.names = FALSE
   )
   #
   utils::write.csv(
-    algae_density,
+    result$algae_density,
     file = file.path(add_path, "algae_density.csv"),
     row.names = FALSE
   )
