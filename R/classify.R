@@ -25,7 +25,7 @@ classify <- function(
 ){
   # 0. Load in experiment design and add to algae_traits df
 
-  algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
+  algae_traits <- dplyr::left_join(algae_traits, exp_design, "bottle")
 
   # 2. Make a list of 32 dataframes: split morph_mvt based on species combination and temperature regime
 
