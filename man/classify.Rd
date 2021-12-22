@@ -9,17 +9,20 @@ classify(
   classifiers_constant,
   classifiers_increasing,
   composition,
+  exp_design,
   species_tracked
 )
 }
 \arguments{
 \item{algae_traits}{algae_traits}
 
-\item{classifiers_constant}{constant tempersture classifier}
+\item{classifiers_constant}{constant temperature classifier}
 
 \item{classifiers_increasing}{increasing temperature classifier}
 
 \item{composition}{composition}
+
+\item{exp_design}{experimental design}
 
 \item{species_tracked}{species tracked}
 }

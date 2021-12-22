@@ -61,10 +61,10 @@ extractor_flowcam_classify <- function(input, output) {
 ### <<< BEGIN SCRIPT ########################################
 #############################################################
 
-design <- read.csv(design_file)
+# design <- read.csv(design_file)
 # comps <- read.csv(composition_file)
 
-algae_traits <- readRDS(algae_traits_file)
+# algae_traits <- readRDS(algae_traits_file)
 
 #############################################################
 # Classification  ------------------------------------------------------------------------
@@ -81,16 +81,13 @@ algae_traits <- readRDS(algae_traits_file)
 # Predict species identities with svm --------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
 
-# 0. Load in experiment design and add to algae_traits df
-
-algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
-
 
 result <- LEEF.measurement.flowcam::classify(
-  algae_traits = algae_traits,
+  algae_traits = readRDS(algae_traits_file),
   classifiers_constant = readRDS(name_constant),
   classifiers_increasing = readRDS(name_increasing),
   composition = read.csv(composition_file),
+  exp_design = read.csv(design_file),
   species_tracked = par_species_tracked()
 )
 

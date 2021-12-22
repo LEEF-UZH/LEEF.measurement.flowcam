@@ -1,9 +1,10 @@
 #' Classify `algae_traits` nad calculates densities
 #'
 #' @param algae_traits algae_traits
-#' @param classifiers_constant constant tempersture classifier
+#' @param classifiers_constant constant temperature classifier
 #' @param classifiers_increasing increasing temperature classifier
 #' @param composition composition
+#' @param exp_design experimental design
 #' @param species_tracked species tracked
 #'
 #' @return `list` containing two objects:
@@ -19,8 +20,13 @@ classify <- function(
   classifiers_constant,
   classifiers_increasing,
   composition,
+  exp_design,
   species_tracked
 ){
+  # 0. Load in experiment design and add to algae_traits df
+
+  algae_traits <- dplyr::left_join(algae_traits, design, "bottle")
+
   # 2. Make a list of 32 dataframes: split morph_mvt based on species combination and temperature regime
 
   algae_traits_list <- split(x = algae_traits,
