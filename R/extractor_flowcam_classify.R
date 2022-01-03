@@ -88,7 +88,9 @@ result <- LEEF.measurement.flowcam::classify(
   classifiers_increasing = readRDS(name_increasing),
   composition = read.csv(composition_file),
   exp_design = read.csv(design_file),
-  species_tracked = par_species_tracked()
+  species_tracked = par_species_tracked(),
+  timestamp = yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
+
 )
 
 # algae_traits <- result$algae_traits
@@ -199,14 +201,12 @@ result <- LEEF.measurement.flowcam::classify(
 # algae_density <- do.call("rbind", algae_density_list) %>%
 #   filter(species %in% par_species_tracked())
 
+  # result$algae_traits$timestamp <- timestamp
+  # result$algae_density$timestamp <- timestamp
+
 #############################################################
 ### >>> END SCRIPT ##########################################
 #############################################################
-
-timestamp <- yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
-
-result$algae_traits$timestamp <- timestamp
-result$algae_density$timestamp <- timestamp
 
 # SAVE --------------------------------------------------------------------
 

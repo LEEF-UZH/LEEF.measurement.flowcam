@@ -6,6 +6,7 @@
 #' @param composition composition
 #' @param exp_design experimental design
 #' @param species_tracked species tracked
+#' @param timestamp timestamp to be used to stamp the classified data
 #'
 #' @return `list` containing two objects:
 #'    - `algae_traits` including species
@@ -21,7 +22,8 @@ classify <- function(
   classifiers_increasing,
   composition,
   exp_design,
-  species_tracked
+  species_tracked,
+  timestamp
 ){
   # 0. Load in experiment design and add to algae_traits df
 
@@ -120,6 +122,9 @@ classify <- function(
 
   algae_density <- do.call("rbind", algae_density_list) %>%
     filter(species %in% species_tracked)
+
+  algae_traits$timestamp <- timestamp
+  algae_density$timestamp <- timestamp
 
   return(
     list(

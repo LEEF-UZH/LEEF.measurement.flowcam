@@ -10,7 +10,8 @@ classify(
   classifiers_increasing,
   composition,
   exp_design,
-  species_tracked
+  species_tracked,
+  timestamp
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ classify(
 \item{exp_design}{experimental design}
 
 \item{species_tracked}{species tracked}
+
+\item{timestamp}{timestamp to be used to stamp the classified data}
 }
 \value{
 \code{list} containing two objects:
