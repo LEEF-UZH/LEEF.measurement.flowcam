@@ -91,18 +91,12 @@ print_parameter <- function(
 
 
 #
-#' @name par_classifier_constant
+#' @name par_classifiers
 #' @title Name of classifier file for constant temperature treatment
 #' @export
-par_classifier_constant <- par_template
-par_classifier_constant("")
+par_classifiers <- par_template
+par_classifiers("")
 
-#
-#' @name par_classifier_increasing
-#' @title Name of classifier file for increasing temperature treatment
-#' @export
-par_classifier_increasing <- par_template
-par_classifier_increasing("")
 
 #
 #' @name par_species_tracked

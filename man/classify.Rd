@@ -4,24 +4,12 @@
 \alias{classify}
 \title{Classify \code{algae_traits} nad calculates densities}
 \usage{
-classify(
-  algae_traits,
-  classifiers_constant,
-  classifiers_increasing,
-  composition,
-  exp_design,
-  species_tracked,
-  timestamp
-)
+classify(algae_traits, classifiers, exp_design, species_tracked, timestamp)
 }
 \arguments{
 \item{algae_traits}{algae_traits}
 
-\item{classifiers_constant}{constant temperature classifier}
-
-\item{classifiers_increasing}{increasing temperature classifier}
-
-\item{composition}{composition}
+\item{classifiers}{list with classifiers as elements}
 
 \item{exp_design}{experimental design}
 
