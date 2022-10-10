@@ -1,13 +1,13 @@
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
-  "identifier": "LEEF.measurement.flowcam",
+  "identifier": "LEEF.2.measurement.flowcam",
   "description": "More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.",
-  "name": "LEEF.measurement.flowcam: Pre-Process and Extract Flowcam Data",
+  "name": "LEEF.2.measurement.flowcam: Pre-Process and Extract Flowcam Data for LEEF-2 experiment",
   "codeRepository": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam",
   "issueTracker": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.31",
+  "version": "0.9.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -201,6 +201,6 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "43.569KB",
-  "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/master/Readme.md"
+  "fileSize": "47.286KB",
+  "readme": "https://github.com/LEEF-UZH/LEEF.measurement.flowcam/blob/LEEF-1/Readme.md"
 }

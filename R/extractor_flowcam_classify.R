@@ -7,6 +7,7 @@
 #'
 #' @return invisibly \code{TRUE} when completed successful
 #'
+#' @importFrom tools file_path_sans_ext
 #' @importFrom data.table fread
 #' @importFrom yaml read_yaml yaml.load
 #' @importFrom utils write.csv
@@ -73,13 +74,12 @@ extractor_flowcam_classify <- function(input, output) {
   # classify ----------------------------------------------------------------
 
 
-  result <- LEEF.measurement.flowcam::classify(
+  result <- classify_LEEF_2(
     algae_traits = readRDS(algae_traits_file),
     classifiers = classifiers,
     exp_design = read.csv(design_file),
     species_tracked = par_species_tracked(),
     timestamp = yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
-
   )
 
 
