@@ -52,28 +52,38 @@ classify_LEEF_2 <- function(
 
     df <- algae_traits_list[[i]]
 
-    TTreat <- unique(df$temperature_treatment) # either "constant" or "increasing"
-    NTreat <- unique(df$nutrient_treatment) # either "constant" or "increasing"
-    STreat <- unique(df$salt_treatment) # either "constant" or "increasing"
-
-
-    if(TTreat=="constant" & NTreat=="constant" & STreat=="constant") {
-      df <- FlowCamClass(classifiers$TC_NC_SC, df, noNAs)
-    } else if(TTreat=="inreasing" & NTreat=="constant" & STreat=="constant") {
-      df <- FlowCamClass(classifiers$TI_NC_SC, df, noNAs)
-    } else if(TTreat=="constant" & NTreat=="inreasing" & STreat=="constant") {
-      df <- FlowCamClass(classifiers$TC_NI_SC, df, noNAs)
-    } else if(TTreat=="constant" & NTreat=="constant" & STreat=="inreasing") {
-      df <- FlowCamClass(classifiers$TC_NC_SI, df, noNAs)
-    } else if(TTreat=="inreasing" & NTreat=="inreasing" & STreat=="constant") {
-      df <- FlowCamClass(classifiers$TI_NI_SC, df, noNAs)
-    } else if(TTreat=="inreasing" & NTreat=="constant" & STreat=="inreasing") {
-      df <- FlowCamClass(classifiers$TI_NC_SI, df, noNAs)
-    } else if(TTreat=="constant" & NTreat=="inreasing" & STreat=="inreasing") {
-      df <- FlowCamClass(classifiers$TC_NI_SI, df, noNAs)
+    x <- unique(df$temperature) # either "constant" or "increasing"
+    if (x == "increasing") {
+      TTreat <- "TI"
+    } else if (x == "constant") {
+      TTreat <- "TC"
     } else {
-      df <- FlowCamClass(classifiers_TI_NI_SI, df, noNAs)
+      stop("Undefined value for `temperature` in experimental design table!")
     }
+
+    x <- unique(df$resources) # either "constant" or "increasing"
+    if (x == "increasing") {
+      NTreat <- "NI"
+    } else if (x == "constant") {
+      NTreat <- "NC"
+    } else {
+      stop("Undefined value for `resources` in experimental design table!")
+    }
+
+    x <- unique(df$salinity) # either "constant" or "increasing"
+    if (x == "increasing") {
+      STreat <- "SI"
+    } else if (x == "constant") {
+      STreat <- "SC"
+    } else {
+      stop("Undefined value for `salinity` in experimental design table!")
+    }
+
+    classifier_name <- paste(TTreat, NTreat, STreat, sep = "_")
+
+
+
+    df <- FlowCamClass(classifiers[[classifier_name]], df, noNAs)
 
     algae_traits_list[[i]] <- df
   }
