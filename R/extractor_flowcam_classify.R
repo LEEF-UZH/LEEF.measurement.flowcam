@@ -57,26 +57,13 @@ extractor_flowcam_classify <- function(input, output) {
 
   # the classifiers for increasing temperatures will have to be updated during experiment!!
 
-  # Read classifiers into list ----------------------------------------------
-
-
-  dir_classifiers <- file.path(flowcam_path, par_classifiers())
-
-  class_files <- list.files(dir_classifiers, pattern = "\\.rds$", full.names = TRUE)
-  classifiers <- lapply(
-    class_files,
-    readRDS
-  )
-  names(classifiers) <- tools::file_path_sans_ext(basename(class_files))
-  classifiers$comment <- readLines(file.path(dir_classifiers, "README.txt"))
-
 
   # classify ----------------------------------------------------------------
 
 
   result <- classify_LEEF_2(
     algae_traits = readRDS(algae_traits_file),
-    classifiers = classifiers,
+    classifiers = readRDS(file.path(flowcam_path, par_classifiers())),
     exp_design = read.csv(design_file),
     species_tracked = par_species_tracked(),
     timestamp = yaml::read_yaml(file.path(input,  "flowcam", "sample_metadata.yml"))$timestamp
