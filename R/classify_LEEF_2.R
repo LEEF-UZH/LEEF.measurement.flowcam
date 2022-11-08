@@ -23,7 +23,7 @@ classify_LEEF_2 <- function(
 ){
   # 0. Load in experiment design and add to algae_traits df
 
-  algae_traits <- dplyr::left_join(algae_traits, exp_design, "bottle")
+  # algae_traits <- dplyr::left_join(algae_traits, exp_design, "bottle")
 
   # 2. Make a list of 32 dataframes: split morph_mvt based on species combination and temperature regime
 
@@ -33,10 +33,12 @@ classify_LEEF_2 <- function(
 
   # 3. Predict species identities in the 32 dfs based on the 32 rf classifiers
 
-  FlowCamClass <- function(classifier, df, noNAs){
+  FlowCamClass <- function(classifier, df){
     noNAs <- !rowSums(is.na(df)) > 0
 
     pr <- predict(classifier, df, probability = TRUE)
+    df$species[noNAs] <- as.character(pr) # species prediction
+
 
     df$species[noNAs] <- pr # species prediction
     df$species_probability[noNAs] <- apply(attributes(pr)$probabilities, 1, max) # probability of each species prediction
@@ -81,16 +83,14 @@ classify_LEEF_2 <- function(
 
     classifier_name <- paste(TTreat, NTreat, STreat, sep = "_")
 
-
-
-    df <- FlowCamClass(classifiers[[classifier_name]], df, noNAs)
+    df <- FlowCamClass(classifiers[[classifier_name]], df)
 
     algae_traits_list[[i]] <- df
   }
 
   # 4. Merge the 32 dfs back into a single df: algae_traits
 
-  algae_traits <- purrr::reduce(algae_traits_list, dplyr::full_join)
+  algae_traits <- suppressMessages(purrr::reduce(algae_traits_list, dplyr::full_join))
 
   #############################################################
   # calculate species densities -------------------------------------------------------------------------
@@ -102,13 +102,12 @@ classify_LEEF_2 <- function(
       species,
       bottle,
       temperature,
+      salinity,
+      replicate,
       incubator,
       volume_imaged,
       dilution_factor,
-      nutrient_treatment,
-      temperature_treatment,
-      salt_treatment,
-      replicate
+      resources
       ) %>%
     summarise(count = n()) %>%
     mutate(density = count * dilution_factor / volume_imaged)
@@ -150,11 +149,11 @@ classify_LEEF_2 <- function(
 
   for (i in seq_along(algae_density_list)) {
     df <- algae_density_list[[i]]
-    idx <- which(!is.element(species.tracked, df$species))
+    idx <- which(!is.element(par_species_tracked(), df$species))
     if (length(idx) == 0) next
     for (j in idx) {
       new.entry <- tail(df, 1)
-      new.entry$species <- species.tracked[j]
+      new.entry$species <- par_species_tracked()[j]
       new.entry$density <- 0
       new.entry$count <- 0
       df <- rbind(df, new.entry)

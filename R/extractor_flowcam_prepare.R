@@ -181,7 +181,18 @@ algae_traits$bottle <- ifelse(
   paste0("b_", algae_traits$bottle)
 )
 
-algae_traits <- plyr::join(algae_traits, dilution, by = "bottle")
+algae_traits <- plyr::join(
+  algae_traits,
+  dilution,
+  by = "bottle"
+)
+
+algae_traits <- plyr::join(
+  algae_traits,
+  read.csv(file.path(input, "flowcam", "experimental_design.csv")),
+  by = "bottle"
+)
+
 
 #############################################################
 ### >>> END SCRIPT ##########################################
