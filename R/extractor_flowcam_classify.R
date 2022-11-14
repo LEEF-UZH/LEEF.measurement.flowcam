@@ -75,7 +75,7 @@ extractor_flowcam_classify <- function(input, output) {
   #
   saveRDS(
     result$algae_traits,
-    file = file.path(add_path, "algae_traits.csv")
+    file = file.path(add_path, "algae_traits.rds")
   )
   # utils::write.csv(
   #   result$algae_traits,
